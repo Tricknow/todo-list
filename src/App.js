@@ -8,6 +8,9 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [sort, setSort] = useState("");
   const [filter, setFilter] = useState("");
+  const [edited, setEdited] = useState(false)
+  const [changedValue, setChangedValue] = useState("");
+
 
   const computedTodos = todos
     .filter((todo) => {
@@ -96,6 +99,18 @@ function App() {
             <span style={{ textDecoration: todo.isDone ? "line-through" : "" }}>
               {todo.content}
             </span>
+            
+            <button onClick={(e) => {
+                const changedTodo = todos.map((todo, idx) =>
+                  idx === index ? {...todo, content: inputValue } : todo
+                );
+                setTodos(changedTodo);
+                setInputValue("");
+                console.log(changedTodo)
+                }}>
+              Edit
+              </button>
+            
             <button
               onClick={() => {
                 const nextTodos = todos.filter((_, idx) => idx !== index);
