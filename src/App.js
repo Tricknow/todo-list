@@ -7,10 +7,12 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const [todos, setTodos] = useState([]);
   const [sort, setSort] = useState("");
-  const [filter, setFilter] = useState("");
-  const [edited, setEdited] = useState(false)
-  const [changedValue, setChangedValue] = useState("");
+  const [filter, setFilter] = useState("ALL");
 
+  const [updateValue, setUpdateValue] = useState("");
+  const [updateTargetIndex, setUpdateTargetIndex] = useState(-1);
+  /** computedValue */
+  const isUpdateMode = updateTargetIndex >= 0;
 
   const computedTodos = todos
     .filter((todo) => {
@@ -80,7 +82,7 @@ function App() {
             setInputValue("");
           }}
         >
-          ADD
+          {"ADD"}
         </button>
       </div>
       <div>
@@ -96,28 +98,47 @@ function App() {
                 setTodos(nextTodos);
               }}
             />
-            <span style={{ textDecoration: todo.isDone ? "line-through" : "" }}>
-              {todo.content}
-            </span>
-            
-            <button onClick={(e) => {
-                const changedTodo = todos.map((todo, idx) =>
-                  idx === index ? {...todo, content: inputValue } : todo
-                );
-                setTodos(changedTodo);
-                setInputValue("");
-                console.log(changedTodo)
-                }}>
-              Edit
-              </button>
-            
+            {updateTargetIndex === index ? (
+              <input
+                value={updateValue}
+                onChange={(e) => setUpdateValue(e.target.value)}
+              />
+            ) : (
+              <span
+                style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+              >
+                {todo.content}
+              </span>
+            )}
             <button
               onClick={() => {
                 const nextTodos = todos.filter((_, idx) => idx !== index);
                 setTodos(nextTodos);
               }}
+              disabled={isUpdateMode}
             >
               DEL
+            </button>
+            <button
+              onClick={() => {
+                if (isUpdateMode) {
+                  const nextTodos = todos.map((todo, index) =>
+                    index === updateTargetIndex
+                      ? { ...todo, content: updateValue }
+                      : todo
+                  );
+                  setTodos(nextTodos);
+                  setUpdateValue("");
+                  setUpdateTargetIndex(-1);
+                  return;
+                }
+
+                setUpdateTargetIndex(index);
+                setUpdateValue(todo.content);
+              }}
+              disabled={isUpdateMode && index !== updateTargetIndex}
+            >
+              UPDATE
             </button>
           </div>
         ))}
