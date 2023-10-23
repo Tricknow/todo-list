@@ -14,7 +14,7 @@ function App() {
   const [updateTargetId, setUpdateTargetId] = useState("");
 
   useEffect(() => {
-    const storedTodos = JSON.parse(localStorage.getItem("todos"));
+    const storedTodos = JSON.parse(localStorage.getItem("todos")); // 이 부분이 문제였음
     setTodos(storedTodos);
   }, []);
 
